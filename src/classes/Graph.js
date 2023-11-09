@@ -18,7 +18,7 @@ export default class Graph {
 
     /**
      *
-     * @param {Node} node - the node to be added
+     * @param {String} nodeName - the node to be added
      * @returns {true|false} - true if it has been added successfully false otherwise
      */
     addNode(nodeName) {
@@ -56,6 +56,18 @@ export default class Graph {
             return true;
         }
         return false;
+    }
+
+    getAdjacentNodes(nodeName) {
+        const adjacentNodes = [];
+
+        this.edges.forEach((edge) => {
+            if (edge.startNode.name === nodeName && edge.endNode.name !== nodeName) {
+                adjacentNodes.push(edge.endNode);
+            }
+        });
+
+        return adjacentNodes;
     }
 
     /**
