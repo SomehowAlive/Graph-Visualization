@@ -1,0 +1,105 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap");
+
+:root {
+    --container-fill: #000c1f;
+    --node-fill: rgb(224, 0, 149);
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: "Roboto", sans-serif;
+}
+
+.svg-container {
+    background: var(--container-fill);
+}
+
+@keyframes node-anim {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes node-circle-anim {
+    from {
+        opacity: 0;
+        r: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.node {
+    text-align: center;
+    fill: var(--node-fill);
+    animation: node-anim 0.4s ease;
+    stroke: white;
+    stroke-width: 0;
+    stroke-width: 2px;
+    stroke-opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.node circle {
+    animation: node-circle-anim 0.4s ease;
+}
+
+.node.selected {
+    stroke-opacity: 1;
+}
+
+.node:not(.selected):hover {
+    filter: drop-shadow(0 0 25px var(--node-fill));
+}
+
+.node-name-input,
+.edge-weight-input {
+    cursor: default;
+    border: none;
+    outline: none;
+    background: none;
+    color: white;
+    width: 100%;
+    font-weight: 700;
+    height: 100%;
+    text-align: center;
+}
+
+.edge {
+    color: white;
+    fill: none;
+    transition: 0.35s ease;
+}
+
+.edge.selected {
+    filter: drop-shadow(0px 0 15px white);
+}
+
+.edge-line {
+    stroke: var(--node-fill);
+    stroke-width: 4px;
+    stroke-dasharray: 1000; /* Adjust the value based on the desired line length */
+    stroke-dashoffset: 1000; /* Set this to the same value as dasharray to hide the line initially */
+    animation: grow-edge 0.8s ease forwards;
+}
+
+@keyframes grow-edge {
+    from {
+        stroke-dashoffset: 1000; /* Start with the line hidden */
+    }
+    to {
+        stroke-dashoffset: 0; /* Fully reveal the line */
+        marker-end: url("#arrow");
+    }
+}

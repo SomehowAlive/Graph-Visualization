@@ -19,14 +19,15 @@ export default class Graph {
     /**
      *
      * @param {String} nodeName - the node to be added
-     * @returns {true|false} - true if it has been added successfully false otherwise
+     * @returns {Node|undefined} - returns the new Node or undefined
      */
     addNode(nodeName) {
         if (!this.getNode(nodeName)) {
-            this.nodes.push(new Node(nodeName));
-            return true;
+            const newNode = new Node(nodeName);
+            this.nodes.push(newNode);
+            return newNode;
         }
-        return false;
+        return undefined;
     }
 
     /**
@@ -51,7 +52,8 @@ export default class Graph {
      */
     renameNode(oldName, newName) {
         const n = this.getNode(oldName);
-        if (n) {
+        const t = this.getNode(newName);
+        if (n && !t && oldName !== "" && newName !== "") {
             n.setName(newName);
             return true;
         }
@@ -85,7 +87,7 @@ export default class Graph {
      * @param {String} startNodeName - the name of the node from which the new edge starts
      * @param {String} endNodeName - the name of the end extremity of the new edge
      * @param {Number} weight - the weight of the edge
-     * @returns {Boolean} - return true if succedeed false otherwise
+     * @returns {Edge|undefined} - return true if succedeed false otherwise
      */
     addEdge(startNodeName, endNodeName) {
         const startNode = this.getNode(startNodeName);
@@ -93,14 +95,15 @@ export default class Graph {
 
         // Input validation
         if (!startNode || !endNode) {
-            return false;
+            return undefined;
         }
 
         if (this.findEdge(startNodeName, endNodeName) === undefined) {
-            this.edges.push(new Edge(this.getNode(startNodeName), this.getNode(endNodeName)));
-            return true;
+            const e = new Edge(this.getNode(startNodeName), this.getNode(endNodeName));
+            this.edges.push(e);
+            return e;
         }
-        return false;
+        return undefined;
     }
 
     /**
