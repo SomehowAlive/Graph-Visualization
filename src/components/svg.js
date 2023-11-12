@@ -1,6 +1,7 @@
 import Graph from "../classes/Graph";
 import nodeComponent from "./nodeComponent";
 import edgeComponent from "./edgeComponent";
+import { graphInfo, updateGraphInfo } from "./graphInfo";
 import { NodeRadius } from "../classes/UI";
 
 let cpt = 0;
@@ -21,7 +22,9 @@ const handleNodeDelete = (nodeName) => {
     if (g.removeNode(nodeName)) {
         document.querySelector(`.node[name="${nodeName}"]`).remove();
         document.querySelectorAll(`.edge[start-node="${nodeName}"],.edge[end-node="${nodeName}"]`).forEach((edge) => edge.remove());
+        updateGraphInfo(g);
         selectedNode = null;
+        selectedEdge = null;
     }
     console.log(g);
 };
@@ -64,7 +67,11 @@ const handleSvgDoubleClick = (e) => {
     const node = g.addNode(String(++cpt));
     const container = document.querySelector(".svg-container");
     const newNode = nodeComponent(node, x, y, NodeRadius, handleNodeNameChange, handleNodeClick);
-    if (node) container.appendChild(newNode);
+    if (node) {
+        container.appendChild(newNode);
+        updateGraphInfo(g);
+        console.log(g);
+    }
 };
 
 const handleEdgeWeightChange = (e, edge) => {
@@ -75,8 +82,14 @@ const handleEdgeWeightChange = (e, edge) => {
 };
 
 const handleEdgeClick = (e) => {
-    selectedEdge = selectedEdge ? null : e.currentTarget;
-    e.currentTarget.classList.toggle("selected");
+    if (!selectedEdge) {
+        selectedEdge = e.currentTarget;
+        e.currentTarget.classList.add("selected");
+    } else if (e.currentTarget.classList.contains("selected")) {
+        selectedEdge = null;
+        e.currentTarget.classList.remove("selected");
+    }
+    console.log(e);
 };
 
 const removeEdge = (edgeElement) => {
@@ -84,6 +97,8 @@ const removeEdge = (edgeElement) => {
     const endNodeName = edgeElement.getAttribute("end-node");
     if (g.removeEdge(startNodeName, endNodeName)) {
         edgeElement.remove();
+        selectedEdge = null;
+        updateGraphInfo(g);
         console.log(g);
     }
 };
@@ -98,6 +113,7 @@ const addEdge = (startNode, endNode) => {
         const container = document.querySelector(".svg-container");
         const newEdge = edgeComponent(e, x1, x2, y1, y2, handleEdgeWeightChange, handleEdgeClick);
         container.appendChild(newEdge);
+        updateGraphInfo(g);
         console.log(g);
         return true;
     }
@@ -117,6 +133,11 @@ const svg = (width, height) => {
         if (e.key === "Delete" && selectedNode) handleNodeDelete(selectedNode.getAttribute("name"));
         if (e.key === "Delete" && selectedEdge) removeEdge(selectedEdge);
     });
+
+    window.onresize = () => {
+        container.setAttribute("width", window.innerWidth);
+        container.setAttribute("height", window.innerHeight);
+    };
     container.innerHTML = `
     <defs>
         <marker id="arrow" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
@@ -124,6 +145,8 @@ const svg = (width, height) => {
         </marker>
     </defs>
     `;
+
+    container.appendChild(graphInfo(g, 100, 100));
 
     return container;
 };

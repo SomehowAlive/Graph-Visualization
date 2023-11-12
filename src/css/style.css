@@ -103,3 +103,9 @@ body {
         marker-end: url("#arrow");
     }
 }
+
+.graph-order,
+.graph-size {
+    color: white;
+    font-size: 20px;
+}

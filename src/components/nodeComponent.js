@@ -4,9 +4,6 @@ const nodeComponent = (node, x, y, r = 25, onNameChange, onClick) => {
     const foreignObj = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
     const nameInput = document.createElement("input");
 
-    container.style.setProperty("--rand-x", Math.random() * 500 + "px");
-    container.style.setProperty("--rand-y", Math.random() * 500 + "px");
-
     container.setAttribute("x", x);
     container.setAttribute("y", y);
     circle.setAttribute("cx", x);

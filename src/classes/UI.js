@@ -5,7 +5,8 @@ const init = () => {
     window.oncontextmenu = (e) => {
         e.preventDefault();
     };
-    document.body.appendChild(svg(screen.width, screen.height));
+    const svgContainer = svg(screen.width, screen.height);
+    document.body.appendChild(svgContainer);
 };
 
 export { init, NodeRadius };
