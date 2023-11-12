@@ -112,10 +112,17 @@ export default class Graph {
      * @returns {boolean} - True if succeeded, false otherwise.
      */
     removeEdge(startNodeName, endNodeName) {
-        if (this.findEdge(startNodeName, endNodeName)) {
-            this.edges = this.edges.filter((edge) => edge.startNode.name !== startNodeName && edge.endNode.name !== endNodeName);
+        const edgeIndex = this.edges.findIndex(
+            (edge) =>
+                (edge.startNode.name === startNodeName && edge.endNode.name === endNodeName) ||
+                (edge.startNode.name === endNodeName && edge.endNode.name === startNodeName)
+        );
+
+        if (edgeIndex !== -1) {
+            this.edges.splice(edgeIndex, 1);
             return true;
         }
+
         return false;
     }
 

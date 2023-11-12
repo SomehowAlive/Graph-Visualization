@@ -45,6 +45,7 @@ const handleNodeClick = (e) => {
         } else {
             clickedNode.classList.add("selected");
             selectedNode = clickedNode;
+            selectedEdge = null;
         }
     }
     // Middle mouse button
@@ -84,6 +85,7 @@ const handleEdgeWeightChange = (e, edge) => {
 const handleEdgeClick = (e) => {
     if (!selectedEdge) {
         selectedEdge = e.currentTarget;
+        selectedNode = null;
         e.currentTarget.classList.add("selected");
     } else if (e.currentTarget.classList.contains("selected")) {
         selectedEdge = null;
