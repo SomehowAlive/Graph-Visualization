@@ -5,6 +5,7 @@ const updateGraphInfo = (graph) => {
 
 const graphInfo = (graph, x, y) => {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
+    const container = document.createElement("div");
     const graphOrder = document.createElement("p");
     const graphSize = document.createElement("p");
 
@@ -14,14 +15,15 @@ const graphInfo = (graph, x, y) => {
     graphOrder.classList.add("graph-order");
     graphSize.classList.add("graph-size");
 
-    g.setAttribute("x", x);
-    g.setAttribute("y", y);
-    g.setAttribute("width", 150);
-    g.setAttribute("height", 150);
+    container.appendChild(graphOrder);
+    container.appendChild(graphSize);
 
-    g.appendChild(graphOrder);
-    g.appendChild(graphSize);
+    container.classList.add("graph-info");
 
+    g.setAttribute("width", "200");
+    g.setAttribute("height", "200");
+
+    g.appendChild(container);
     return g;
 };
 

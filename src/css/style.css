@@ -1,8 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap");
 
 :root {
-    --container-fill: #000c1f;
-    --node-fill: rgb(224, 0, 149);
+    --controls-fill: #020013;
+    --svg-fill: #030027;
+    --anim-fill: rgb(89, 135, 172);
+    --node-fill: rgb(168, 0, 235);
 }
 
 * {
@@ -14,12 +17,32 @@
 body {
     width: 100vw;
     height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(450px, 2fr) 1fr;
+    grid-template-rows: minmax(400px, 75%) 1fr;
     overflow: hidden;
-    font-family: "Roboto", sans-serif;
+    font-family: "Open Sans", sans-serif;
 }
 
 .svg-container {
-    background: var(--container-fill);
+    width: 100%;
+    height: 100%;
+    scale: 1;
+    transition: 0.35s ease;
+    background-color: var(--svg-fill);
+}
+
+.anim-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--anim-fill);
+}
+
+.controls-container {
+    padding: 1rem 2rem;
+    grid-column: span 2;
+    background-color: var(--controls-fill);
 }
 
 @keyframes node-anim {
@@ -41,7 +64,9 @@ body {
     }
 }
 .node {
-    text-align: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
     fill: var(--node-fill);
     animation: node-anim 0.4s ease;
     stroke: white;
@@ -49,6 +74,18 @@ body {
     stroke-width: 2px;
     stroke-opacity: 0;
     transition: all 0.3s ease;
+}
+
+.node-name-input {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.node.highlighted {
+    fill: rgb(0, 200, 0);
+    filter: drop-shadow(0 0 50px greenyellow);
 }
 
 .node circle {
@@ -60,7 +97,7 @@ body {
 }
 
 .node:not(.selected):hover {
-    filter: drop-shadow(0 0 25px var(--node-fill));
+    filter: drop-shadow(0 0 15px var(--node-fill));
 }
 
 .node-name-input,
@@ -86,15 +123,20 @@ body {
     filter: drop-shadow(0px 0 15px white);
 }
 
+.edge.highlighted .edge-line {
+    stroke: rgb(47, 255, 64);
+    filter: drop-shadow(0 0 50px rgb(0, 255, 0));
+}
+
 .edge-line {
     stroke: var(--node-fill);
     stroke-width: 4px;
-    stroke-dasharray: 1000; /* Adjust the value based on the desired line length */
-    stroke-dashoffset: 1000; /* Set this to the same value as dasharray to hide the line initially */
-    animation: grow-edge 0.8s ease forwards;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: edge-anim 0.8s ease forwards;
 }
 
-@keyframes grow-edge {
+@keyframes edge-anim {
     from {
         stroke-dashoffset: 1000; /* Start with the line hidden */
     }
@@ -104,8 +146,114 @@ body {
     }
 }
 
+.graph-info {
+    padding: 10px;
+    font-weight: 600;
+    margin: 20px;
+}
+
 .graph-order,
 .graph-size {
+    padding: 5px;
     color: white;
-    font-size: 20px;
+    font-size: 22px;
+}
+
+.stack,
+.queue {
+    transition: height 0.35s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    width: 80px;
+    color: white;
+    border: 2px solid white;
+    border-top: 0;
+}
+
+.stack::before {
+    position: absolute;
+    bottom: -40px;
+    content: "Stack";
+}
+
+.stack-elem {
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: 0.2s ease;
+}
+.stack-elem,
+.queue-elem {
+    width: 100%;
+    padding: 20px 10px;
+    background-color: rgba(2, 197, 197, 0.8);
+}
+
+.queue-elem {
+    transform: translateY(100%);
+    opacity: 0;
+    transition: 0.2s ease;
+}
+
+.stack-elem-show,
+.queue-elem-show {
+    transform: translateY(0);
+    border: 1px solid white;
+    border-top: 0;
+    opacity: 1;
+}
+
+.queue {
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.queue::before {
+    content: "Queue";
+}
+
+.anim-btn {
+    cursor: pointer;
+    outline: none;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 30px;
+    color: white;
+    font-family: "Roboto", sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    background-color: transparent;
+    margin: 2rem;
+    border: 2px solid var(--color);
+    transition: background-color 0.4s ease;
+}
+
+.anim-btn:hover {
+    background-color: var(--hover-color);
+}
+
+.popup {
+    position: fixed;
+    bottom: 10%;
+    left: 50%;
+    max-width: 800px;
+    text-align: center;
+    padding: 0.7rem 4rem;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: white;
+    transform: translate(-50%, 200%);
+    opacity: 0;
+    border-radius: 30px;
+    transition: 0.45s ease;
+    background-color: rgb(20, 163, 220);
+    box-shadow: 0 0 45px 0 black;
+}
+
+.popup.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
 }

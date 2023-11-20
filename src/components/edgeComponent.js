@@ -1,4 +1,4 @@
-import { NodeRadius } from "../classes/UI";
+import { NodeRadius } from "./Ui";
 
 const createSelfEdge = (x, y, radius) => {
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
