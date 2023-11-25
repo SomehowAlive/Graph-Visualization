@@ -35,7 +35,7 @@ const stackComponent = () => {
 
     const reset = () => {
         stack = [];
-        element.childNodes.forEach((n) => n.remove());
+        [...element.children].forEach((n) => n.remove());
     };
 
     return { element, push, pop, top, length, s: stack, reset };

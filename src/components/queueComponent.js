@@ -32,7 +32,7 @@ const queueComponent = () => {
     const length = () => queue.length;
     const reset = () => {
         queue = [];
-        element.childNodes.forEach((c) => c.remove());
+        [...element.children].forEach((c) => c.remove());
     };
 
     return { element, enqueue, dequeue, length, reset };

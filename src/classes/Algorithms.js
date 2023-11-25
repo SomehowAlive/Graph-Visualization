@@ -30,8 +30,8 @@ export default class Algorithms {
 
     static async DFSAnimation(graph, s, stack, delay = 1000) {
         resetGraphStyles();
-        const visited = new Set();
 
+        const visited = new Set();
         stack.push(s);
         await new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -55,8 +55,46 @@ export default class Algorithms {
         }
         document.body.appendChild(popup("End of Depth First Search Animation !"));
         document.querySelector(".svg-container").classList.remove("animating");
-        resetAnimArea();
         stack.reset();
+        resetAnimArea();
+    }
+
+    static async DFSAnimationV2(graph, s, stack, delay = 1000) {
+        resetGraphStyles();
+        await new Promise((resolve) => setTimeout(resolve, delay * 0.5));
+
+        const visited = new Set();
+        stack.push(s);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+
+        while (visited.size !== graph.order()) {
+            let currentNode = null;
+            if (!stack.length()) {
+                do {
+                    currentNode = graph.nodes[parseInt(Math.random() * graph.nodes.length)].name;
+                } while (visited.has(currentNode));
+                stack.push(currentNode);
+            }
+            await new Promise((resolve) => setTimeout(resolve, delay * 0.5));
+            currentNode = stack.pop();
+            console.log(currentNode);
+            visited.add(currentNode);
+            highlightNode(currentNode);
+            const successors = graph.getSuccessors(currentNode);
+            for (const successor of successors) {
+                if (!visited.has(successor)) {
+                    stack.push(successor);
+                    visited.add(successor);
+                    highlightEdge(currentNode, successor);
+                    highlightNode(successor);
+                    await new Promise((resolve) => setTimeout(resolve, delay));
+                }
+            }
+        }
+        document.body.appendChild(popup("End of Depth First Search Animation !"));
+        document.querySelector(".svg-container").classList.remove("animating");
+        stack.reset();
+        resetAnimArea();
     }
 
     /**
@@ -107,8 +145,48 @@ export default class Algorithms {
         }
         document.body.appendChild(popup("End of Breadth First Search Animation !"));
         document.querySelector(".svg-container").classList.remove("animating");
-        resetAnimArea();
         queue.reset();
+        resetAnimArea();
+    }
+
+    static async BFSAnimationV2(graph, s, queue, delay = 1000) {
+        resetGraphStyles();
+        await new Promise((resolve) => setTimeout(resolve, delay * 0.5));
+
+        const visited = new Set();
+        visited.add(s);
+        queue.enqueue(s);
+        await new Promise((resolve) => setTimeout(resolve, delay * 0.5));
+
+        while (visited.size !== graph.order()) {
+            let current = null;
+            if (!queue.length()) {
+                do {
+                    current = graph.nodes[parseInt(Math.random() * graph.order())].name;
+                } while (visited.has(current));
+                queue.enqueue(current);
+            }
+            await new Promise((resolve) => setTimeout(resolve, delay * 0.5));
+            current = queue.dequeue();
+            console.log(current);
+            highlightNode(current);
+            visited.add(current);
+            const successors = graph.getSuccessors(current);
+            for (const successor of successors) {
+                if (!visited.has(successor)) {
+                    queue.enqueue(successor);
+                    console.log(successor);
+                    visited.add(successor);
+                    highlightEdge(current, successor);
+                    highlightNode(successor);
+                    await new Promise((resolve) => setTimeout(resolve, delay));
+                }
+            }
+        }
+        document.body.appendChild(popup("End of Breadth First Search Animation !"));
+        document.querySelector(".svg-container").classList.remove("animating");
+        queue.reset();
+        resetAnimArea();
     }
 
     static getSCC(graph) {

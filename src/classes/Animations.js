@@ -1,4 +1,4 @@
-import { getSelectedNode, stack, queue, g, resetAnimArea } from "../components/Ui";
+import { getSelectedNode, stack, queue, g, resetAnimArea, resetGraphStyles } from "../components/Ui";
 import popup from "../components/popup";
 import Algorithms from "./Algorithms";
 
@@ -18,7 +18,7 @@ function startDFSAnimation(e) {
         console.log("Starting DFS Animations");
         container.classList.add("animating");
         document.querySelector(".anim-area").appendChild(stack.element);
-        Algorithms.DFSAnimation(g, startingNode.getAttribute("name"), stack, 2000);
+        Algorithms.DFSAnimationV2(g, startingNode.getAttribute("name"), stack, 2000);
     }
 }
 
@@ -38,11 +38,12 @@ function startBFSAnimation(e) {
         console.log("Starting BFS Animation");
         container.classList.add("animating");
         document.querySelector(".anim-area").appendChild(queue.element);
-        Algorithms.BFSAnimation(g, startingNode.getAttribute("name"), queue, 2000);
+        Algorithms.BFSAnimationV2(g, startingNode.getAttribute("name"), queue, 2000);
     }
 }
 
 function startgetSCC() {
+    resetGraphStyles();
     for (const CC of Algorithms.getSCC(g)) {
         for (const node of CC.nodes) {
             document.querySelector(`.node[name="${node}"]`).style.fill = CC.color;

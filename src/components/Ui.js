@@ -176,10 +176,11 @@ const highlightNode = (nodeName) => {
 };
 
 const resetGraphStyles = () => {
-    document.querySelectorAll(".node.selected")?.forEach((selectedNode) => selectedNode.classList.remove("selected"));
-    document.querySelectorAll(".edge.selected")?.forEach((selectedEdge) => selectedEdge.classList.remove("selected"));
-    document.querySelectorAll(".node.highlighted")?.forEach((selectedEdge) => selectedEdge.classList.remove("highlighted"));
-    document.querySelectorAll(".edge.highlighted")?.forEach((selectedEdge) => selectedEdge.classList.remove("highlighted"));
+    document.querySelectorAll(".selected")?.forEach((selectedNode) => selectedNode.classList.remove("selected"));
+    document.querySelectorAll(".highlighted")?.forEach((selectedEdge) => selectedEdge.classList.remove("highlighted"));
+    document
+        .querySelectorAll(".node,.edge")
+        ?.forEach((elem) => (elem.classList.contains("node") ? (elem.style.fill = "") : (elem.style.stroke = "")));
 };
 
 const getSelectedNode = () => {

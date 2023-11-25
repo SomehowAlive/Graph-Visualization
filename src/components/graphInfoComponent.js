@@ -1,6 +1,6 @@
 import Algorithms from "../classes/Algorithms";
 const updateGraphInfo = (graph) => {
-    document.querySelector(".graph-components-count").textContent = `Components ${Algorithms.getSCC(graph).length}`;
+    document.querySelector(".graph-components-count").textContent = `Strongly Connected Components ${Algorithms.getSCC(graph).length}`;
     document.querySelector(".graph-order").textContent = `Order ${graph.order()}`;
     document.querySelector(".graph-size").textContent = `Size ${graph.size()}`;
 };
@@ -14,7 +14,7 @@ const graphInfo = (graph, x, y) => {
     const graphSize = document.createElement("p");
 
     title.textContent = "Graph Data";
-    componentsCount.textContent = `Components ${Algorithms.getSCC(graph).length}`;
+    componentsCount.textContent = `Strongly Connected Components ${Algorithms.getSCC(graph).length}`;
     graphOrder.textContent = `Order ${graph.order()}`;
     graphSize.textContent = `Size  ${graph.size()}`;
 
