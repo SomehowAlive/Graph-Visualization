@@ -7,7 +7,7 @@ const stackElem = (val) => {
 
 const stackComponent = () => {
     const element = document.createElement("div");
-    const stack = [];
+    let stack = [];
     element.classList.add("stack");
 
     const push = (val) => {
@@ -33,7 +33,12 @@ const stackComponent = () => {
 
     const length = () => stack.length;
 
-    return { element, push, pop, top, length };
+    const reset = () => {
+        stack = [];
+        element.childNodes.forEach((n) => n.remove());
+    };
+
+    return { element, push, pop, top, length, s: stack, reset };
 };
 
 export default stackComponent;

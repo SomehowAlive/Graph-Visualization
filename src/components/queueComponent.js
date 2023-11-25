@@ -7,7 +7,7 @@ const queueElem = (val) => {
 
 const queueComponent = () => {
     const element = document.createElement("div");
-    const queue = [];
+    let queue = [];
     element.classList.add("queue");
 
     const enqueue = (val) => {
@@ -30,8 +30,12 @@ const queueComponent = () => {
     };
 
     const length = () => queue.length;
+    const reset = () => {
+        queue = [];
+        element.childNodes.forEach((c) => c.remove());
+    };
 
-    return { element, enqueue, dequeue, length };
+    return { element, enqueue, dequeue, length, reset };
 };
 
 export default queueComponent;

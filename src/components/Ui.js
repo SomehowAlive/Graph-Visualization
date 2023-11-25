@@ -4,11 +4,13 @@ import edgeComponent from "./edgeComponent";
 import stackComponent from "./stackComponent";
 import { graphInfo, updateGraphInfo } from "./graphInfoComponent";
 import animationButton from "./animationButton";
-import popup from "./popup";
-import { startDFSAnimation, startBFSAnimation } from "../classes/Animations";
+import { startDFSAnimation, startBFSAnimation, startgetSCC } from "../classes/Animations";
 import queueComponent from "./queueComponent";
+import { HelpOverlay, openOverlayBtn, showOverlay } from "./overlay";
+import Algorithms from "../classes/Algorithms";
 
-const NodeRadius = 25;
+const BODY = document.body;
+const NodeRadius = 30;
 const g = new Graph();
 const stack = stackComponent();
 const queue = queueComponent();
@@ -17,7 +19,6 @@ let selectedNode = null;
 let selectedEdge = null;
 
 const isAnimationOn = () => {
-    console.log(document.querySelector(".svg-container").classList.contains("animating"));
     return document.querySelector(".svg-container").classList.contains("animating");
 };
 
@@ -77,17 +78,21 @@ const handleNodeClick = (e) => {
 };
 
 const handleSvgDoubleClick = (e) => {
+    e.preventDefault();
+    const svgContainer = e.currentTarget;
+
+    const [w, h] = svgContainer.getAttribute("viewBox").split(" ").splice(2);
     if (!isAnimationOn()) {
-        e.preventDefault();
-        const { offsetX: x, offsetY: y } = e;
+        const x = `${(e.offsetX * 100) / w}%`;
+        const y = `${(e.offsetY * 100) / h}%`;
         const nodes = document.querySelectorAll(".node");
         let overlap = false;
         nodes.forEach((node) => {
-            const nodeX = +node.getAttribute("x");
-            const nodeY = +node.getAttribute("y");
-            if (x >= nodeX - NodeRadius * 2 && x <= nodeX + NodeRadius * 2 && y >= nodeY - NodeRadius * 2 && y <= nodeY + NodeRadius * 2) {
-                console.log(y, nodeY);
+            const nodeX = parseFloat(node.getAttribute("x"));
+            const nodeY = parseFloat(node.getAttribute("y"));
+            if (Math.abs(parseFloat(x) - nodeX) <= 4 && Math.abs(parseFloat(y) - nodeY) <= 4) {
                 overlap = true;
+                console.log("overlap");
                 return;
             }
         });
@@ -145,10 +150,10 @@ const removeEdge = (edgeElement) => {
 
 const addEdge = (startNode, endNode) => {
     if (!isAnimationOn()) {
-        const x1 = +startNode.getAttribute("x");
-        const y1 = +startNode.getAttribute("y");
-        const x2 = +endNode.getAttribute("x");
-        const y2 = +endNode.getAttribute("y");
+        const x1 = parseFloat(startNode.getAttribute("x"));
+        const y1 = parseFloat(startNode.getAttribute("y"));
+        const x2 = parseFloat(endNode.getAttribute("x"));
+        const y2 = parseFloat(endNode.getAttribute("y"));
         const e = g.addEdge(startNode.getAttribute("name"), endNode.getAttribute("name"));
         if (e) {
             const Edgescontainer = document.querySelector(".edges-container");
@@ -181,6 +186,12 @@ const getSelectedNode = () => {
     return document.querySelector(".node.selected");
 };
 
+const getSvgSize = () => {
+    const { width, height } = getComputedStyle(document.querySelector(".svg-container"));
+    return { w: parseFloat(width), h: parseFloat(height) };
+};
+
+/* graph drawing area */
 const svg = () => {
     const container = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     const nodesContainer = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -190,12 +201,21 @@ const svg = () => {
     nodesContainer.classList.add("nodes-container");
     edgesContainer.classList.add("edges-container");
 
-    container.addEventListener("dblclick", handleSvgDoubleClick);
+    const updateViewBox = () => {
+        const { width, height } = getComputedStyle(container);
+        container.setAttribute("viewBox", `0 0 ${parseFloat(width)} ${parseFloat(height)}`);
+    };
+    container.onload = updateViewBox;
 
+    container.addEventListener("dblclick", handleSvgDoubleClick);
     window.addEventListener("keydown", (e) => {
         if (e.key === "Delete" && selectedNode) handleNodeDelete(selectedNode.getAttribute("name"));
         if (e.key === "Delete" && selectedEdge) removeEdge(selectedEdge);
     });
+
+    window.onresize = () => {
+        updateViewBox();
+    };
 
     container.innerHTML = `<defs><marker id="arrow" markerWidth="4" markerHeight="4" refX="3.7" refY="2" orient="auto"><polygon points="0 0, 4 2, 0 4" fill="white" /></marker></defs>`;
     container.appendChild(graphInfo(g, 200, 100));
@@ -205,26 +225,53 @@ const svg = () => {
     return container;
 };
 
-const buttonsContainer = () => {
-    const buttonsContainer = document.createElement("div");
-    buttonsContainer.classList.add("controls-container");
-    buttonsContainer.appendChild(animationButton("Depth First Search", "#1025FB", startDFSAnimation));
-    buttonsContainer.appendChild(animationButton("Breadth First Search", "#15FA47", startBFSAnimation));
-    return buttonsContainer;
+const resetAnimArea = () => {
+    [...document.querySelector(".anim-area").children].forEach((child) => child.remove());
 };
 
-const resetAnimArea = () => {
-    document.querySelector(".anim-area").childNodes.forEach((child) => child.remove());
+const controlsArea = () => {
+    const mainContainer = document.createElement("div");
+    const TraversalContainer = document.createElement("div");
+    const OtherContainer = document.createElement("div");
+    const traversalTitle = document.createElement("p");
+    const otherTitle = document.createElement("p");
+
+    mainContainer.classList.add("controls-container");
+    TraversalContainer.classList.add("col");
+    OtherContainer.classList.add("col");
+    traversalTitle.classList.add("title");
+    otherTitle.classList.add("title");
+
+    traversalTitle.innerText = "Traversal Algorithms";
+    otherTitle.innerText = "Other Algorithms";
+
+    TraversalContainer.appendChild(traversalTitle);
+    TraversalContainer.appendChild(animationButton("Depth First Search", "#1025FB", startDFSAnimation));
+    TraversalContainer.appendChild(animationButton("Breadth First Search", "#15FA47", startBFSAnimation));
+
+    OtherContainer.appendChild(otherTitle);
+    OtherContainer.appendChild(animationButton("Topological Sorting", "#f2DA00"));
+    OtherContainer.appendChild(animationButton("Strongly Connected Components", "#cb1010", startgetSCC));
+
+    mainContainer.appendChild(TraversalContainer);
+    mainContainer.appendChild(OtherContainer);
+
+    return mainContainer;
+};
+
+const animArea = () => {
+    const animationArea = document.createElement("div");
+    animationArea.classList.add("anim-area");
+    return animationArea;
 };
 
 const init = () => {
-    document.body.appendChild(svg());
-    const animationArea = document.createElement("div");
-    animationArea.classList.add("anim-area");
-
-    document.body.appendChild(animationArea);
-    document.body.appendChild(buttonsContainer());
+    BODY.appendChild(animArea());
+    BODY.appendChild(svg());
+    BODY.appendChild(controlsArea());
+    BODY.appendChild(HelpOverlay());
+    BODY.appendChild(openOverlayBtn());
 };
 
 export default svg;
-export { init, NodeRadius, stack, queue, g, highlightNode, highlightEdge, getSelectedNode, resetGraphStyles, resetAnimArea };
+export { init, NodeRadius, stack, queue, g, highlightNode, highlightEdge, getSelectedNode, resetGraphStyles, resetAnimArea, getSvgSize };

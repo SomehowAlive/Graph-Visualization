@@ -60,18 +60,6 @@ export default class Graph {
         return false;
     }
 
-    getAdjacentNodes(nodeName) {
-        const adjacentNodes = [];
-
-        this.edges.forEach((edge) => {
-            if (edge.startNode.name === nodeName && edge.endNode.name !== nodeName) {
-                adjacentNodes.push(edge.endNode);
-            }
-        });
-
-        return adjacentNodes;
-    }
-
     /**
      *
      * @param {String} startNodeName - the start node of the edge to find
@@ -139,6 +127,54 @@ export default class Graph {
             edge.setWeight(weight);
             return true;
         }
+        return false;
+    }
+
+    getSuccessors(nodeName) {
+        const successors = [];
+        this.edges.forEach((edge) => {
+            if (edge.startNode.name === nodeName && edge.endNode.name !== nodeName) {
+                successors.push(edge.endNode.name);
+            }
+        });
+
+        return successors;
+    }
+
+    getPredecessors(nodeName) {
+        const predecessors = [];
+        this.edges.forEach((edge) => {
+            if (edge.startNode.name !== nodeName && edge.endNode.name === nodeName) {
+                predecessors.push(edge.endNode.name);
+            }
+        });
+
+        return predecessors;
+    }
+
+    /**
+     *
+     * @param {Node} u - The name of the starting node
+     * @param {*} v - the name of the ending node
+     * @description Checks if there is a path from node u to v
+     * @returns {Boolean} - True if there is a path from u to v false otherwise
+     */
+    path(u, v) {
+        if (!this.getNode(u) || !this.getNode(v)) return null;
+
+        let i = 0;
+        const L = new Set();
+        const iterator = L.values();
+        L.add(u);
+
+        do {
+            const curr = iterator.next().value;
+            for (const successor of this.getSuccessors(curr)) {
+                if (successor === v) return true;
+                L.add(successor);
+            }
+            i++;
+        } while (i < L.size);
         return false;
     }
 

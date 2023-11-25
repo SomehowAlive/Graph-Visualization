@@ -2,15 +2,19 @@ import { getSelectedNode, stack, queue, g, resetAnimArea } from "../components/U
 import popup from "../components/popup";
 import Algorithms from "./Algorithms";
 
-function startDFSAnimation() {
-    resetAnimArea();
+function startDFSAnimation(e) {
     const container = document.querySelector(".svg-container");
+    if (container.classList.contains("animating")) {
+        console.log("Another Algorithm Animation is running");
+        return;
+    }
+    resetAnimArea();
     const startingNode = getSelectedNode();
     if (!startingNode) {
         document.body.appendChild(popup("Please Select A starting Node First !"));
-    } else if (container.classList.contains("animating")) {
-        console.log("Another Algorithm Animation is running");
     } else {
+        document.querySelector(".anim-btn.active")?.classList.remove("active");
+        e.currentTarget.classList.add("active");
         console.log("Starting DFS Animations");
         container.classList.add("animating");
         document.querySelector(".anim-area").appendChild(stack.element);
@@ -18,15 +22,19 @@ function startDFSAnimation() {
     }
 }
 
-function startBFSAnimation() {
-    resetAnimArea();
+function startBFSAnimation(e) {
     const container = document.querySelector(".svg-container");
+    if (container.classList.contains("animating")) {
+        console.log("Another Algorithm Animation is running");
+        return;
+    }
+    resetAnimArea();
     const startingNode = getSelectedNode();
     if (!startingNode) {
         document.body.appendChild(popup("Please Select A starting Node First !"));
-    } else if (container.classList.contains("animating")) {
-        document.body.appendChild(popup("Another Algorithm is running please Wait!"));
     } else {
+        document.querySelector(".anim-btn.active")?.classList.remove("active");
+        e.currentTarget.classList.add("active");
         console.log("Starting BFS Animation");
         container.classList.add("animating");
         document.querySelector(".anim-area").appendChild(queue.element);
@@ -34,4 +42,16 @@ function startBFSAnimation() {
     }
 }
 
-export { startDFSAnimation, startBFSAnimation, stack, queue };
+function startgetSCC() {
+    for (const CC of Algorithms.getSCC(g)) {
+        for (const node of CC.nodes) {
+            document.querySelector(`.node[name="${node}"]`).style.fill = CC.color;
+            const edges = document.querySelectorAll(`.edge[start-node="${node}"]`);
+            edges.forEach((e) => {
+                if (e && CC.nodes.has(e.getAttribute("end-node"))) e.style.stroke = CC.color;
+            });
+        }
+    }
+}
+
+export { startDFSAnimation, startBFSAnimation, startgetSCC, stack, queue };

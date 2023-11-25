@@ -1,4 +1,4 @@
-const animationButton = (name, mainColor, onClick = null) => {
+const animationButton = (name, mainColor, onClick = () => null) => {
     const btn = document.createElement("button");
 
     btn.type = "button";

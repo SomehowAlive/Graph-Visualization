@@ -1,7 +1,8 @@
 import Graph from "./Graph";
 import Node from "./Node";
-import { highlightNode, highlightEdge, resetGraphStyles } from "../components/Ui";
+import { highlightNode, highlightEdge, resetGraphStyles, resetAnimArea, g } from "../components/Ui";
 import popup from "../components/popup";
+import connectedComponent from "./ConnectedComponent";
 
 export default class Algorithms {
     /**
@@ -9,24 +10,19 @@ export default class Algorithms {
      * @param {String} s - the name of the node to start DFS from
      */
     static DFS(graph, s) {
-        const visited = new Map();
+        const visited = new Set();
         const stack = [];
-
-        for (const node of graph.nodes) {
-            visited.set(node.name, false);
-        }
 
         stack.push(s);
 
         while (stack.length) {
             const currentNode = stack.pop();
-            if (!visited.get(currentNode)) {
+            if (!visited.has(currentNode)) {
                 console.log(currentNode);
-                visited.set(currentNode, true);
-
-                const adjacentNodes = graph.getAdjacentNodes(currentNode);
-                adjacentNodes.forEach((adjNode) => {
-                    if (!visited.get(adjNode.name)) stack.push(adjNode.name);
+                visited.add(currentNode);
+                const successors = graph.getSuccessors(currentNode);
+                successors.forEach((successor) => {
+                    if (!visited.has(successor)) stack.push(successor);
                 });
             }
         }
@@ -34,36 +30,33 @@ export default class Algorithms {
 
     static async DFSAnimation(graph, s, stack, delay = 1000) {
         resetGraphStyles();
-        const visited = new Map();
-
-        for (const node of graph.nodes) {
-            visited.set(node.name, false);
-        }
+        const visited = new Set();
 
         stack.push(s);
         await new Promise((resolve) => setTimeout(resolve, delay));
 
         while (stack.length()) {
             const currentNode = stack.pop();
-            if (!visited.get(currentNode)) {
-                console.log(currentNode);
-                visited.set(currentNode, true);
-                highlightNode(currentNode);
-                await new Promise((resolve) => setTimeout(resolve, delay * 0.8));
+            console.log(currentNode);
+            visited.add(currentNode);
+            highlightNode(currentNode);
+            await new Promise((resolve) => setTimeout(resolve, delay * 0.8));
 
-                const adjacentNodes = graph.getAdjacentNodes(currentNode);
-                for (const adjNode of adjacentNodes) {
-                    if (!visited.get(adjNode.name)) {
-                        stack.push(adjNode.name);
-                        highlightEdge(currentNode, adjNode.name);
-                        highlightNode(adjNode.name);
-                        await new Promise((resolve) => setTimeout(resolve, delay));
-                    }
+            const successors = graph.getSuccessors(currentNode);
+            for (const successor of successors) {
+                if (!visited.has(successor)) {
+                    stack.push(successor);
+                    visited.add(successor);
+                    highlightEdge(currentNode, successor);
+                    highlightNode(successor);
+                    await new Promise((resolve) => setTimeout(resolve, delay));
                 }
             }
         }
         document.body.appendChild(popup("End of Depth First Search Animation !"));
         document.querySelector(".svg-container").classList.remove("animating");
+        resetAnimArea();
+        stack.reset();
     }
 
     /**
@@ -72,20 +65,19 @@ export default class Algorithms {
      * @param {Node} s - the node to start BFS from
      */
     static BFS(graph, s) {
-        const visited = new Map();
-        for (const node of graph.nodes) visited.set(node.name, false);
+        const visited = new Set();
         const queue = [];
-
         queue.push(s);
-        visited.set(s.name, true);
+        visited.add(s);
+
         while (queue.length) {
             const current = queue.shift();
-            console.log(current.name);
-            const adjacentNodes = graph.getAdjacentNodes(current.name);
-            adjacentNodes.forEach((adjNode) => {
-                if (!visited.get(adjNode.name)) {
-                    visited.set(adjNode.name, true);
-                    queue.push(adjNode);
+            console.log(current);
+            const successors = graph.getSuccessors(current);
+            successors.forEach((successor) => {
+                if (!visited.has(successor)) {
+                    visited.add(successor);
+                    queue.push(successor);
                 }
             });
         }
@@ -93,33 +85,52 @@ export default class Algorithms {
 
     static async BFSAnimation(graph, s, queue, delay = 1000) {
         resetGraphStyles();
-        const visited = new Map();
-        for (const node of graph.nodes) visited.set(node.name, false);
-
+        const visited = new Set();
+        visited.add(s);
         queue.enqueue(s);
-        visited.set(s.name, true);
-
         await new Promise((resolve) => setTimeout(resolve, delay));
 
         while (queue.length()) {
             const current = queue.dequeue();
             console.log(current);
             highlightNode(current);
-            const adjacentNodes = graph.getAdjacentNodes(current);
-            for (const adjNode of adjacentNodes) {
-                if (!visited.get(adjNode.name)) {
-                    queue.enqueue(adjNode.name);
-                    visited.set(adjNode.name, true);
-                    highlightEdge(current, adjNode.name);
-                    highlightNode(adjNode.name);
+            const successors = graph.getSuccessors(current);
+            for (const successor of successors) {
+                if (!visited.has(successor)) {
+                    queue.enqueue(successor);
+                    visited.add(successor);
+                    highlightEdge(current, successor);
+                    highlightNode(successor);
                     await new Promise((resolve) => setTimeout(resolve, delay * 0.8));
                 }
             }
         }
         document.body.appendChild(popup("End of Breadth First Search Animation !"));
         document.querySelector(".svg-container").classList.remove("animating");
+        resetAnimArea();
+        queue.reset();
     }
-    static detectCycle(graph) {}
+
+    static getSCC(graph) {
+        const SCC = [];
+        const visited = new Set();
+        for (const u of graph.nodes) {
+            if (!visited.has(u.name)) {
+                const tmpSCC = new connectedComponent();
+                tmpSCC.addNode(u.name);
+                for (const v of graph.nodes) {
+                    if (u !== v && !visited.has(v.name) && graph.path(u.name, v.name) && graph.path(v.name, u.name)) {
+                        tmpSCC.addNode(v.name);
+                        visited.add(v.name);
+                    }
+                }
+                visited.add(u.name);
+                SCC.push(tmpSCC);
+            }
+        }
+        console.log(SCC);
+        return SCC;
+    }
+
     static topologicalSort(graph) {}
-    static findStrongComponent(graph) {}
 }
