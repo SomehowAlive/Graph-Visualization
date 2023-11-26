@@ -1,33 +1,55 @@
 import Algorithms from "../classes/Algorithms";
 const updateGraphInfo = (graph) => {
-    document.querySelector(".graph-components-count").textContent = `Strongly Connected Components ${Algorithms.getSCC(graph).length}`;
-    document.querySelector(".graph-order").textContent = `Order ${graph.order()}`;
-    document.querySelector(".graph-size").textContent = `Size ${graph.size()}`;
+    const SCC = Algorithms.getSCC(graph);
+    document.querySelector(".graph-is-acyclic").textContent = `${SCC.every((scc) => scc.nodes.size === 1)}`;
+    document.querySelector(".graph-components-count").textContent = `${Algorithms.getSCC(graph).length}`;
+    document.querySelector(".graph-order").textContent = `${graph.order()}`;
+    document.querySelector(".graph-size").textContent = `${graph.size()}`;
 };
 
 const graphInfo = (graph, x, y) => {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
     const container = document.createElement("div");
     const title = document.createElement("p");
-    const componentsCount = document.createElement("p");
-    const graphOrder = document.createElement("p");
-    const graphSize = document.createElement("p");
+    const p1 = document.createElement("p");
+    const p2 = document.createElement("p");
+    const p3 = document.createElement("p");
+    const p4 = document.createElement("p");
+    const SCCcount = document.createElement("span");
+    const isAcyclic = document.createElement("span");
+    const graphOrder = document.createElement("span");
+    const graphSize = document.createElement("span");
 
-    title.textContent = "Graph Data";
-    componentsCount.textContent = `Strongly Connected Components ${Algorithms.getSCC(graph).length}`;
-    graphOrder.textContent = `Order ${graph.order()}`;
-    graphSize.textContent = `Size  ${graph.size()}`;
+    const SCC = Algorithms.getSCC(graph);
 
-    componentsCount.classList.add("graph-components-count");
+    title.textContent = "Graph Data ";
+    p1.textContent = "Is Acyclic ";
+    p2.textContent = "Strongly Connected Components ";
+    p3.textContent = "Order ";
+    p4.textContent = "Size ";
+
+    isAcyclic.classList.add("graph-is-acyclic");
+    SCCcount.classList.add("graph-components-count");
     graphOrder.classList.add("graph-order");
     graphSize.classList.add("graph-size");
     title.classList.add("title");
     title.style.fontWeight = "600";
 
+    isAcyclic.innerText = SCC.every((scc) => scc.nodes.size === 1);
+    SCCcount.innerText = SCC.length;
+    graphOrder.innerText = graph.order();
+    graphSize.innerText = graph.size();
+
+    p1.appendChild(isAcyclic);
+    p2.appendChild(SCCcount);
+    p3.appendChild(graphOrder);
+    p4.appendChild(graphSize);
+
     container.appendChild(title);
-    container.appendChild(componentsCount);
-    container.appendChild(graphOrder);
-    container.appendChild(graphSize);
+    container.appendChild(p1);
+    container.appendChild(p2);
+    container.appendChild(p3);
+    container.appendChild(p4);
 
     container.classList.add("graph-info");
 

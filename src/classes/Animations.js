@@ -55,4 +55,16 @@ function startgetSCC() {
     }
 }
 
-export { startDFSAnimation, startBFSAnimation, startgetSCC, stack, queue };
+function startTopologicalSorting() {
+    const isAcyclic = document.querySelector(".graph-is-acyclic").textContent === "true" ? true : false;
+    if (!isAcyclic) {
+        document.body.appendChild(popup("The graph must be Acyclic"));
+    } else {
+        console.log("Start Topological Sorting Animation");
+        document.querySelector(".anim-btn.active")?.classList.remove("active");
+        document.querySelector(".svg-container").classList.add("animating", "topo");
+        Algorithms.topologicalSortV2(g, 1000);
+    }
+}
+
+export { startDFSAnimation, startBFSAnimation, startgetSCC, startTopologicalSorting, stack, queue };

@@ -133,7 +133,7 @@ export default class Graph {
     getSuccessors(nodeName) {
         const successors = [];
         this.edges.forEach((edge) => {
-            if (edge.startNode.name === nodeName && edge.endNode.name !== nodeName) {
+            if (edge.startNode.name === nodeName) {
                 successors.push(edge.endNode.name);
             }
         });

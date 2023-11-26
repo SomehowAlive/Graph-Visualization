@@ -4,7 +4,7 @@ import edgeComponent from "./edgeComponent";
 import stackComponent from "./stackComponent";
 import { graphInfo, updateGraphInfo } from "./graphInfoComponent";
 import animationButton from "./animationButton";
-import { startDFSAnimation, startBFSAnimation, startgetSCC } from "../classes/Animations";
+import { startDFSAnimation, startBFSAnimation, startgetSCC, startTopologicalSorting } from "../classes/Animations";
 import queueComponent from "./queueComponent";
 import { HelpOverlay, openOverlayBtn, showOverlay } from "./overlay";
 import Algorithms from "../classes/Algorithms";
@@ -214,9 +214,7 @@ const svg = () => {
         if (e.key === "Delete" && selectedEdge) removeEdge(selectedEdge);
     });
 
-    window.onresize = () => {
-        updateViewBox();
-    };
+    window.addEventListener("resize", updateViewBox);
 
     container.innerHTML = `<defs><marker id="arrow" markerWidth="4" markerHeight="4" refX="3.7" refY="2" orient="auto"><polygon points="0 0, 4 2, 0 4" fill="white" /></marker></defs>`;
     container.appendChild(graphInfo(g, 200, 100));
@@ -251,7 +249,7 @@ const controlsArea = () => {
     TraversalContainer.appendChild(animationButton("Breadth First Search", "#15FA47", startBFSAnimation));
 
     OtherContainer.appendChild(otherTitle);
-    OtherContainer.appendChild(animationButton("Topological Sorting", "#f2DA00"));
+    OtherContainer.appendChild(animationButton("Topological Sorting", "#f2DA00", startTopologicalSorting));
     OtherContainer.appendChild(animationButton("Strongly Connected Components", "#cb1010", startgetSCC));
 
     mainContainer.appendChild(TraversalContainer);

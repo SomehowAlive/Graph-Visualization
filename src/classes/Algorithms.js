@@ -210,5 +210,66 @@ export default class Algorithms {
         return SCC;
     }
 
-    static topologicalSort(graph) {}
+    static topologicalSort(graph) {
+        const result = [];
+        const visited = new Set();
+
+        function dfs(node) {
+            visited.add(node.name);
+
+            const successors = graph.getSuccessors(node.name);
+            for (const successor of successors) {
+                if (!visited.has(successor)) {
+                    dfs(graph.getNode(successor));
+                }
+            }
+
+            result.unshift(node);
+        }
+
+        // Iterate through all nodes in case the graph is disconnected
+        for (const node of graph.nodes) {
+            if (!visited.has(node.name)) {
+                dfs(node);
+            }
+        }
+
+        console.log(result);
+        return result;
+    }
+
+    static async topologicalSortV2(graph, delay = 1000) {
+        resetGraphStyles();
+
+        const result = [];
+        const visited = new Set();
+
+        function dfs(node) {
+            visited.add(node.name);
+
+            const successors = graph.getSuccessors(node.name);
+            for (const successor of successors) {
+                if (!visited.has(successor)) {
+                    dfs(graph.getNode(successor));
+                }
+            }
+
+            result.unshift(node);
+        }
+
+        for (const node of graph.nodes) {
+            if (!visited.has(node.name)) {
+                dfs(node);
+            }
+        }
+
+        for (const node of result) {
+            highlightNode(node.name);
+            await new Promise((resolve) => setTimeout(resolve, delay));
+        }
+
+        document.body.appendChild(popup("End of Topological Sorting Animation !"));
+        document.querySelector(".svg-container").classList.remove("animating");
+        resetAnimArea();
+    }
 }

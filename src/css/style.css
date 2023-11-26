@@ -36,7 +36,7 @@ body {
     transition: 450ms ease;
 }
 
-body:nth-child(2):has(.animating) {
+body:nth-child(2):has(.animating):not(:has(.topo)) {
     --anim-area-width: 300px;
     transition: 450ms ease;
 }
@@ -239,6 +239,10 @@ button {
     padding: 5px;
     color: white;
     font-size: 1.2rem;
+}
+
+.graph-info span {
+    font-weight: 500;
 }
 
 .stack,
