@@ -55,6 +55,19 @@ function startgetSCC() {
     }
 }
 
+function startgetCC() {
+    resetGraphStyles();
+    for (const CC of Algorithms.getCC(g)) {
+        for (const node of CC.nodes) {
+            document.querySelector(`.node[name="${node}"]`).style.fill = CC.color;
+            const edges = document.querySelectorAll(`.edge[start-node="${node}"]`);
+            edges.forEach((e) => {
+                if (e && CC.nodes.has(e.getAttribute("end-node"))) e.style.stroke = CC.color;
+            });
+        }
+    }
+}
+
 function startTopologicalSorting() {
     const isAcyclic = document.querySelector(".graph-is-acyclic").textContent === "true" ? true : false;
     if (!isAcyclic) {
@@ -67,4 +80,4 @@ function startTopologicalSorting() {
     }
 }
 
-export { startDFSAnimation, startBFSAnimation, startgetSCC, startTopologicalSorting, stack, queue };
+export { startDFSAnimation, startBFSAnimation, startgetSCC, startgetCC, startTopologicalSorting, stack, queue };

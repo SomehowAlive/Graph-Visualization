@@ -85,6 +85,7 @@ export default class Algorithms {
                 if (!visited.has(successor)) {
                     stack.push(successor);
                     visited.add(successor);
+                    console.log(successor);
                     highlightEdge(currentNode, successor);
                     highlightNode(successor);
                     await new Promise((resolve) => setTimeout(resolve, delay));
@@ -137,6 +138,7 @@ export default class Algorithms {
                 if (!visited.has(successor)) {
                     queue.enqueue(successor);
                     visited.add(successor);
+                    console.log(successor);
                     highlightEdge(current, successor);
                     highlightNode(successor);
                     await new Promise((resolve) => setTimeout(resolve, delay * 0.8));
@@ -187,6 +189,27 @@ export default class Algorithms {
         document.querySelector(".svg-container").classList.remove("animating");
         queue.reset();
         resetAnimArea();
+    }
+
+    static getCC(graph) {
+        const CC = [];
+        const visited = new Set();
+        for (const u of graph.nodes) {
+            if (!visited.has(u.name)) {
+                const tmpSCC = new connectedComponent();
+                tmpSCC.addNode(u.name);
+                for (const v of graph.nodes) {
+                    if (u !== v && !visited.has(v.name) && graph.path(u.name, v.name)) {
+                        tmpSCC.addNode(v.name);
+                        visited.add(v.name);
+                    }
+                }
+                visited.add(u.name);
+                CC.push(tmpSCC);
+            }
+        }
+        console.log(CC);
+        return CC;
     }
 
     static getSCC(graph) {

@@ -4,7 +4,7 @@ import edgeComponent from "./edgeComponent";
 import stackComponent from "./stackComponent";
 import { graphInfo, updateGraphInfo } from "./graphInfoComponent";
 import animationButton from "./animationButton";
-import { startDFSAnimation, startBFSAnimation, startgetSCC, startTopologicalSorting } from "../classes/Animations";
+import { startDFSAnimation, startBFSAnimation, startgetSCC, startTopologicalSorting, startgetCC } from "../classes/Animations";
 import queueComponent from "./queueComponent";
 import { HelpOverlay, openOverlayBtn, showOverlay } from "./overlay";
 import Algorithms from "../classes/Algorithms";
@@ -249,8 +249,9 @@ const controlsArea = () => {
     TraversalContainer.appendChild(animationButton("Breadth First Search", "#15FA47", startBFSAnimation));
 
     OtherContainer.appendChild(otherTitle);
-    OtherContainer.appendChild(animationButton("Topological Sorting", "#f2DA00", startTopologicalSorting));
+    OtherContainer.appendChild(animationButton("Weakly Connected Components", "#cb1010", startgetCC));
     OtherContainer.appendChild(animationButton("Strongly Connected Components", "#cb1010", startgetSCC));
+    OtherContainer.appendChild(animationButton("Topological Sorting", "#f2DA00", startTopologicalSorting));
 
     mainContainer.appendChild(TraversalContainer);
     mainContainer.appendChild(OtherContainer);
@@ -270,6 +271,9 @@ const init = () => {
     BODY.appendChild(controlsArea());
     BODY.appendChild(HelpOverlay());
     BODY.appendChild(openOverlayBtn());
+    window.addEventListener("keydown", (e) => {
+        if (e.key === "c") console.log(Algorithms.getCC(g));
+    });
 };
 
 export default svg;

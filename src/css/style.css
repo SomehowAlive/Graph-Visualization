@@ -29,7 +29,7 @@ body {
     height: 100vh;
     display: grid;
     grid-template-columns: var(--anim-area-width) 1fr;
-    grid-template-rows: minmax(400px, 70%) auto;
+    grid-template-rows: minmax(400px, 65%) auto;
     overflow: hidden;
     font-family: "Open Sans", sans-serif;
     font-family: "Roboto", sans-serif;
